@@ -5,6 +5,7 @@ import org.apache.catalina.Server;
 import org.apache.catalina.startup.Tomcat;
 
 import javax.servlet.ServletException;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
@@ -30,12 +31,14 @@ public final class Launcher {
      *                            configuration.
      * @throws LifecycleException if web application configured incorrectly.
      * @throws URISyntaxException if problems with {@link Launcher} occur.
+     * @throws IOException        if problems with IO occur.
      */
     public static void main(final String[] args) throws ServletException,
-            LifecycleException, URISyntaxException {
+            LifecycleException, URISyntaxException, IOException {
         start("/equiron", Integer.valueOf(Optional.ofNullable(
                 System.getProperty("http.port")).orElse("8080")
-        )).await();
+        ));
+        System.in.read();
     }
 
     /**
@@ -61,6 +64,8 @@ public final class Launcher {
         tomcat.getHost().setAppBase(".");
         tomcat.addWebapp(contextPath, selfPath.toFile().getAbsolutePath());
         tomcat.start();
+        System.out.println("Equiron service started at http://localhost:" + port + contextPath);
+        System.out.print("To terminate press enter...");
         return tomcat.getServer();
     }
 }

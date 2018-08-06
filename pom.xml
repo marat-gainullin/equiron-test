@@ -5,7 +5,7 @@
 
     <groupId>com.bearsoft</groupId>
     <artifactId>equiron-test</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.0.1-SNAPSHOT</version>
     <packaging>war</packaging>
 
     <name>equiron-test</name>
@@ -218,27 +218,14 @@
                         <artifactId>maven-compiler-plugin</artifactId>
                         <configuration>
                             <excludes>
-                                <exclude>com.equiron.Launcher.java</exclude>
+                                <exclude>com/equiron/Launcher.java</exclude>
                             </excludes>
+                            <testExcludes>
+                                <testEexclude>com/equiron/LauncherTest.java</testEexclude>
+                            </testExcludes>
                             <compilerArguments>
                                 <endorseddirs>${endorsed.dir}</endorseddirs>
                             </compilerArguments>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <artifactId>maven-war-plugin</artifactId>
-                        <configuration>
-                            <failOnMissingWebXml>false</failOnMissingWebXml>
-                            <warName>${project.artifactId}</warName>
-                            <webResources>
-                                <resource>
-                                    <directory>client-src/</directory>
-                                    <includes>
-                                        <include>app/**/*</include>
-                                        <include>web/**/*</include>
-                                    </includes>
-                                </resource>
-                            </webResources>
                         </configuration>
                     </plugin>
                     <plugin>
@@ -329,7 +316,7 @@
                             <packagingExcludes>
                                 WEB-INF/lib/tomcat*.jar
                             </packagingExcludes>
-                            <warName>${project.artifactId}-standalone</warName>
+                            <warName>${project.artifactId}-${project.version}-standalone</warName>
                         </configuration>
                     </plugin>
                     <plugin>
@@ -340,9 +327,9 @@
                                 <phase>prepare-package</phase>
                                 <configuration>
                                     <tasks>
-                                        <move todir="${project.build.directory}/${project.artifactId}-${project.version}/">
-                                            <fileset dir="${project.build.directory}/classes/">
-                                                <include name="com.equiron.Launcher.class"/>
+                                        <move todir="${project.build.directory}/${project.artifactId}-${project.version}/com/equiron">
+                                            <fileset dir="${project.build.directory}/classes/com/equiron">
+                                                <include name="Launcher.class"/>
                                             </fileset>
                                         </move>
                                     </tasks>
