@@ -1,6 +1,7 @@
 package com.equiron;
 
 import org.apache.catalina.LifecycleException;
+import org.apache.catalina.Server;
 import org.apache.catalina.startup.Tomcat;
 
 import javax.servlet.ServletException;
@@ -32,17 +33,34 @@ public final class Launcher {
      */
     public static void main(final String[] args) throws ServletException,
             LifecycleException, URISyntaxException {
-        String contextPath = "/equiron";
+        start("/equiron", Integer.valueOf(Optional.ofNullable(
+                System.getProperty("http.port")).orElse("8080")
+        )).await();
+    }
+
+    /**
+     * Configures and starts an embedded tomcat server.
+     *
+     * @param contextPath Context path, the micro service application should
+     *                    be deployed at.
+     * @param port        Port, starting server will listen ro
+     * @return {@link Server} instance started.
+     * @throws ServletException   if problems occur while web application
+     *                            configuration.
+     * @throws LifecycleException if web application configured incorrectly.
+     * @throws URISyntaxException if problems with {@link Launcher} occur.
+     */
+    static Server start(final String contextPath, final int port)
+            throws ServletException,
+            LifecycleException, URISyntaxException {
         URL codeLocation = Launcher.class.getProtectionDomain()
                 .getCodeSource().getLocation();
         Path selfPath = Paths.get(codeLocation.toURI());
         Tomcat tomcat = new Tomcat();
-        tomcat.setPort(Integer.valueOf(Optional.ofNullable(
-                System.getProperty("http.port")).orElse("8080")
-        ));
+        tomcat.setPort(port);
         tomcat.getHost().setAppBase(".");
         tomcat.addWebapp(contextPath, selfPath.toFile().getAbsolutePath());
         tomcat.start();
-        tomcat.getServer().await();
+        return tomcat.getServer();
     }
 }

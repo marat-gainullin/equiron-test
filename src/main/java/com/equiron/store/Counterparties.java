@@ -34,16 +34,6 @@ public final class Counterparties {
     }
 
     /**
-     * Checks a {@link Counterparty} existence.
-     *
-     * @param key a key of counterparty.
-     * @return true if a counterparty exists and false otherwise.
-     */
-    public static boolean exists(final String key) {
-        return STORE.containsKey(key);
-    }
-
-    /**
      * Looks up a {@link Counterparty} instance by a key.
      *
      * @param key a key of counterparty.

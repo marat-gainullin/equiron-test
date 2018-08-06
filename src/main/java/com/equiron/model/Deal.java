@@ -1,12 +1,12 @@
 package com.equiron.model;
 
-import com.equiron.exceptions.BadValueFormatException;
-import com.equiron.exceptions.NoItemException;
-import com.equiron.exceptions.SameCounterpartyException;
 import com.equiron.store.Counterparties;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -14,44 +14,43 @@ import java.util.Objects;
  * Domain class for sell / buy deals.
  * Immutable.
  */
-public class Deal {
+public final class Deal {
 
-    /**
-     * Format validation constant.
-     */
-    private static final int COUNTERPARTY_KEY_LENGTH = 9;
     /**
      * Seller field.
      */
+    @NotNull
+    @Valid
     private final Counterparty seller;
 
     /**
      * Customer field.
      */
+    @NotNull
+    @Valid
     private final Counterparty customer;
 
     /**
      * Products collection field.
      */
+    @NotNull
+    @NotEmpty
+    @Valid
     private final Collection<Product> products;
 
     /**
      * @param aSeller   {@link Counterparty} instance to set as
-     *                 aSeller in the deal.
+     *                  aSeller in the deal.
      * @param aCustomer {@link Counterparty} instance to set as
-     *                 aCustomer in the deal.
+     *                  aCustomer in the deal.
      * @param aProducts {@link Collection<Product>} instance to set as
-     *                 aProducts of the deal.
+     *                  aProducts of the deal.
      */
     public Deal(final Counterparty aSeller, final Counterparty aCustomer,
                 final Collection<Product> aProducts) {
-        Objects.requireNonNull(aSeller, "aSeller is required");
-        Objects.requireNonNull(aCustomer, "aCustomer is required");
-        Objects.requireNonNull(aProducts, "aProducts is required,"
-                + " even if it is empty");
-        this.seller = aSeller;
-        this.customer = aCustomer;
-        this.products = aProducts;
+        seller = aSeller;
+        customer = aCustomer;
+        products = aProducts;
     }
 
     /**
@@ -59,7 +58,7 @@ public class Deal {
      *
      * @return {@link Counterparty} instance used as seller in the deal.
      */
-    public final Counterparty getSeller() {
+    public Counterparty getSeller() {
         return seller;
     }
 
@@ -68,7 +67,7 @@ public class Deal {
      *
      * @return {@link Counterparty} instance used as customer in the deal.
      */
-    public final Counterparty getCustomer() {
+    public Counterparty getCustomer() {
         return customer;
     }
 
@@ -77,7 +76,7 @@ public class Deal {
      *
      * @return {@link Collection<Product>} instance with products of the deal.
      */
-    public final Collection<Product> getProducts() {
+    public Collection<Product> getProducts() {
         return products;
     }
 
@@ -89,44 +88,28 @@ public class Deal {
      * @param customerKey key of known customer.
      * @param products    products collection of the deal.
      * @return {@link Deal} instance with resolved counterparties.
-     * @throws NoItemException           if no counterparty with given
-     *                                   key found.
-     * @throws BadValueFormatException   if key format violation detected
-     * @throws SameCounterpartyException if customer and seller
-     *                                   counterparties are the same.
      */
     @JsonCreator
     public static Deal of(
-            @JsonProperty(value = "seller", required = true) final
+            @JsonProperty(value = "seller") final
             String sellerKey,
-            @JsonProperty(value = "customer", required = true) final
+            @JsonProperty(value = "customer") final
             String customerKey,
-            @JsonProperty(value = "products", required = true) final
+            @JsonProperty(value = "products") final
             Collection<Product> products
-    ) throws NoItemException,
-            BadValueFormatException,
-            SameCounterpartyException {
-        if (sellerKey.length() == COUNTERPARTY_KEY_LENGTH) {
-            if (customerKey.length() == COUNTERPARTY_KEY_LENGTH) {
-                Counterparty seller = Counterparties.find(sellerKey)
-                        .orElseThrow(() -> new NoItemException(sellerKey));
-                Counterparty customer = Counterparties.find(customerKey)
-                        .orElseThrow(() -> new NoItemException(customerKey));
-                if (seller != customer) {
-                    return new Deal(seller, customer, products);
-                } else {
-                    throw new SameCounterpartyException(sellerKey);
-                }
-            } else {
-                throw new BadValueFormatException("customer",
-                        "'customer' field "
-                                + "should be " + COUNTERPARTY_KEY_LENGTH
-                                + " characters length");
-            }
+    ) {
+        Counterparty seller = Counterparties.find(sellerKey)
+                .orElse(new Counterparty(sellerKey, "Unknown seller "
+                        + sellerKey));
+        Counterparty customer = Counterparties.find(customerKey)
+                .orElse(new Counterparty(customerKey, "Unknown customer "
+                        + customerKey));
+        if (!Objects.equals(seller.getKey(), customer.getKey())) {
+            return new Deal(seller, customer, products);
         } else {
-            throw new BadValueFormatException("seller", "'seller' field "
-                    + "should be " + COUNTERPARTY_KEY_LENGTH
-                    + " characters length");
+            throw new IllegalStateException("Same seller / customer detected ("
+                    + sellerKey
+                    + ")");
         }
     }
 

@@ -1,23 +1,24 @@
 package com.equiron.endpoints;
 
 import com.equiron.exceptions.NoItemException;
-import com.equiron.exceptions.SameCounterpartyException;
-import com.equiron.exceptions.BadValueFormatException;
-import com.equiron.exceptions.ValueMissingException;
 import com.equiron.model.Deal;
 import com.equiron.store.Deals;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.converter.HttpMessageConversionException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 /**
  * Deals Json REST end point.
@@ -50,7 +51,7 @@ public class DealsEndpoint {
             consumes = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
     @ResponseStatus(HttpStatus.CREATED)
-    public final void addDeal(@RequestBody final Deal deal,
+    public final void addDeal(@Valid @RequestBody final Deal deal,
                               final HttpServletResponse response) {
         response.setHeader("Location", "/deals/" + deals.add(deal));
     }
@@ -73,54 +74,38 @@ public class DealsEndpoint {
     }
 
     /**
-     * Handles {@code NoItemException} exceptions.
+     * Handles {@link NoItemException} exception.
      *
-     * @param ex A {@code NoItemException} instance.
-     * @return A {@code String} to be bound as a graceful http response.
+     * @param ex A {@link NoItemException} instance.
+     * @return A {@link ErrorDescription} to be bound as a graceful
+     * rest json response.
      * @see NoItemException
      */
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NoItemException.class)
-    public final String handleException(final NoItemException ex) {
-        return ex.getMessage();
+    public final
+    @ResponseBody
+    ErrorDescription handleNoItem(final NoItemException ex) {
+        return new ErrorDescription(HttpStatus.NOT_FOUND.value(),
+                ex.getMessage());
     }
 
     /**
-     * Handles {@code ValueMissingException} exceptions.
+     * Handles {@link HttpMessageConversionException} and
+     * {@link MethodArgumentNotValidException} exceptions.
      *
-     * @param ex A {@code ValueMissingException} instance.
-     * @return A {@code String} to be bound as a graceful http response.
-     * @see NoItemException
+     * @param ex An {@link Exception} instance.
+     * @return A {@link ErrorDescription} to be bound as a graceful
+     * rest json response.
+     * @see HttpMessageConversionException, MethodArgumentNotValidException
      */
-    @ResponseStatus(HttpStatus.EXPECTATION_FAILED)
-    @ExceptionHandler(ValueMissingException.class)
-    public final String handleException(final ValueMissingException ex) {
-        return ex.getMessage();
-    }
-
-    /**
-     * Handles {@code SameCounterpartyException} exceptions.
-     *
-     * @param ex A {@code SameCounterpartyException} instance.
-     * @return A {@code String} to be bound as a graceful http response.
-     * @see NoItemException
-     */
-    @ResponseStatus(HttpStatus.EXPECTATION_FAILED)
-    @ExceptionHandler(SameCounterpartyException.class)
-    public final String handleException(final SameCounterpartyException ex) {
-        return ex.getMessage();
-    }
-
-    /**
-     * Handles {@code BadValueFormatException} exceptions.
-     *
-     * @param ex A {@code BadValueFormatException} instance.
-     * @return A {@code String} to be bound as a graceful http response.
-     * @see NoItemException
-     */
-    @ResponseStatus(HttpStatus.EXPECTATION_FAILED)
-    @ExceptionHandler(BadValueFormatException.class)
-    public final String handleException(final BadValueFormatException ex) {
-        return ex.getMessage();
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler({HttpMessageConversionException.class,
+            MethodArgumentNotValidException.class})
+    public final
+    @ResponseBody
+    ErrorDescription handleBind(final Exception ex) {
+        return new ErrorDescription(HttpStatus.BAD_REQUEST.value(),
+                ex.getMessage());
     }
 }

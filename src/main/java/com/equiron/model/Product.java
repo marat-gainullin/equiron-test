@@ -1,28 +1,31 @@
 package com.equiron.model;
 
-import com.equiron.exceptions.BadValueFormatException;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.Objects;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 /**
  * Domain class for product.
  * Immutable.
  */
-public class Product {
+public final class Product {
 
     /**
      * Product key validation rule constant.
      */
-    public static final int PRODUCT_KEY_LENGTH = 13;
+    private static final int KEY_LENGTH = 13;
     /**
      * Key field.
      */
+    @NotBlank
+    @Size(min = KEY_LENGTH, max = KEY_LENGTH)
     private final String code;
     /**
      * Human readable name field.
      */
+    @NotBlank
     private final String name;
 
     /**
@@ -32,10 +35,8 @@ public class Product {
      * @param aName Product's aName.
      */
     public Product(final String aCode, final String aName) {
-        Objects.requireNonNull(aCode, "'aCode' is required");
-        Objects.requireNonNull(aName, "'aName' is required");
-        this.code = aCode;
-        this.name = aName;
+        code = aCode;
+        name = aName;
     }
 
     /**
@@ -43,7 +44,7 @@ public class Product {
      *
      * @return Key of the product
      */
-    public final String getCode() {
+    public String getCode() {
         return code;
     }
 
@@ -52,28 +53,22 @@ public class Product {
      *
      * @return Name of the product
      */
-    public final String getName() {
+    public String getName() {
         return name;
     }
 
     /**
      * Product factory method. Validates {@link Product}'s fields.
+     *
      * @param code value for {@link Product#code} field
      * @param name value for {@link Product#name} field
      * @return created {@link Product#code} instance.
-     * @throws BadValueFormatException if validation fails.
      */
     @JsonCreator
     public static Product of(
-            @JsonProperty(value = "code", required = true) final String code,
-            @JsonProperty(value = "name", required = true) final String name
-    ) throws BadValueFormatException {
-        if (code.length() == PRODUCT_KEY_LENGTH) {
-            return new Product(code, name);
-        } else {
-            throw new BadValueFormatException("product[].code",
-                    "'product[].code' field should be "
-                            + PRODUCT_KEY_LENGTH + " characters length");
-        }
+            @JsonProperty(value = "code") final String code,
+            @JsonProperty(value = "name") final String name
+    ) {
+        return new Product(code, name);
     }
 }

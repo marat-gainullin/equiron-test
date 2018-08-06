@@ -1,21 +1,32 @@
 package com.equiron.model;
 
-import java.util.Objects;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  * Domain class for customers and sellers.
  * Immutable.
  */
-public class Counterparty {
+public final class Counterparty {
+
+    /**
+     * {@link Counterparty#key} length.
+     */
+    private static final int KEY_LENGTH = 9;
 
     /**
      * Counterparty's key.
      */
+    @NotNull
+    @NotBlank
+    @Size(min = KEY_LENGTH, max = KEY_LENGTH)
     private final String key;
 
     /**
      * Human readable counterparty's name.
      */
+    @NotBlank
     private final String name;
 
     /**
@@ -25,10 +36,8 @@ public class Counterparty {
      * @param aName Counterparty's aName.
      */
     public Counterparty(final String aKey, final String aName) {
-        Objects.requireNonNull(aKey, "'aKey' is required");
-        Objects.requireNonNull(aName, "'aName' is required");
-        this.key = aKey;
-        this.name = aName;
+        key = aKey;
+        name = aName;
     }
 
     /**
@@ -36,7 +45,7 @@ public class Counterparty {
      *
      * @return key value.
      */
-    public final String getKey() {
+    public String getKey() {
         return key;
     }
 
@@ -45,7 +54,7 @@ public class Counterparty {
      *
      * @return Name of the counterparty
      */
-    public final String getName() {
+    public String getName() {
         return name;
     }
 }
