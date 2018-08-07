@@ -2,9 +2,13 @@
 Equiron skills test project. It is about Java, SpringMVC and web micro-services.
 
 ## Requirements
-To build and run this projects you need Java 8 update 161+, Git Git-2.15.1.2+ and Maven 3.5.4+.
+To build and run this projects you need Java JDK 8 update 161+, Git Git-2.15.1.2+ and Maven 3.5.4+.
 
 ## Building
+Building tool - Maven requires `JAVA_HOME` environment variable to be defined and to point to
+jdk location. Please, ensure that it is defined and points to jdk location on disk. For example
+`C:\Program Files\Java\jdk1.8.0_161`.
+
 To build the project from source, use the following commands:
 ```
 git clone https://github.com/marat-gainullin/equiron-test.git
@@ -15,7 +19,12 @@ mvn package
 ## Running
 If you want to run the project as a standalone micro-service, then use the following command:
 ```
-java -jar .\target\equiron-test-0.0.1-SNAPSHOT-standalone.war
+java -jar ./target/equiron-test-0.0.1-SNAPSHOT-standalone.war
+```
+This will run standalone micro service based on embedded tomcat. It will listen http on `8080` port.
+You can customize the port number with java system property as follows:
+```
+java -Dhttp.port=8888 -jar ./target/equiron-test-0.0.1-SNAPSHOT-standalone.war
 ```
 
 ## Contained mode
