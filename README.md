@@ -1,4 +1,4 @@
-g# Equiron test
+# Equiron test
 Equiron skills test project. It is about Java, SpringMVC and web micro-services.
 
 Tha aim of the project is to build a web micro-service that accepts documents like the following:
