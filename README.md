@@ -44,7 +44,7 @@ If you want to build regular web application for deploy to any servlet container
 ```
 mvn package -Pcontained
 ```
-After that, regular war file `target/equiron-test-0.0.1-SNAPSHOT.war` will be created.
+After that, regular war file `target/equiron-test-0.0.1-SNAPSHOT.war` without tomcat content will be created.
 
 ## QA & Reporting
 To generate code coverage report, use the following command:
