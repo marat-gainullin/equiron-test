@@ -12,7 +12,7 @@ Tha aim of the project is to build a web micro-service that accepts documents li
 and reports any errors of validation. All fields in the document are required. 
 
 ## Requirements
-To build and run this project you need Java JDK 8 update 161+, Git Git-2.15.1.2+ and Maven 3.5.4+.
+To build and run this project you need JDK 8 update 161+, Git 2.15.1.2+ and Maven 3.5.4+.
 
 ## Building
 Building tool - Maven requires `JAVA_HOME` environment variable to be defined and to point to
