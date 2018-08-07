@@ -32,7 +32,7 @@ If you want to run the project as a standalone micro-service, then use the follo
 java -jar ./target/equiron-test-0.0.1-SNAPSHOT-standalone.war
 ```
 This will run standalone micro-service based on embedded tomcat. It will listen http on `8080` port.
-The service creates endpoint which accepts `POST` requests at `/deals` uri and `GET` requests at `/deals/{deal-key}` uri.
+The service creates endpoint which accepts `POST` requests at `/equiron/deals` uri and `GET` requests at `/equiron/deals/{deal-key}` uri.
  
 You can customize the port number with java system property as follows:
 ```
