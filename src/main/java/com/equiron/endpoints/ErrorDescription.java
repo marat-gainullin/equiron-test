@@ -1,6 +1,6 @@
 package com.equiron.endpoints;
 
-import java.util.Date;
+import java.time.Instant;
 
 /**
  * Exception information DTO.
@@ -18,7 +18,7 @@ public final class ErrorDescription {
     /**
      * Moment of error generation.
      */
-    private final Date moment = new Date();
+    private final Instant moment = Instant.now();
 
     /**
      * Error description constructor.
@@ -51,9 +51,10 @@ public final class ErrorDescription {
 
     /**
      * Returns a moment, the error was captured at.
+     *
      * @return a moment, the error was captured at.
      */
-    public Date getMoment() {
+    public Instant getMoment() {
         return moment;
     }
 }

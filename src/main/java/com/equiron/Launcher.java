@@ -64,8 +64,9 @@ public final class Launcher {
         tomcat.getHost().setAppBase(".");
         tomcat.addWebapp(contextPath, selfPath.toFile().getAbsolutePath());
         tomcat.start();
-        System.out.println("Equiron service started at http://localhost:" + port + contextPath);
-        System.out.print("To terminate press enter...");
+        System.out.println("Equiron service started at http://localhost:"
+                + port + contextPath);
+        System.out.println("To terminate press enter...");
         return tomcat.getServer();
     }
 }

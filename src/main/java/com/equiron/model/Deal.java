@@ -82,7 +82,7 @@ public final class Deal {
 
     /**
      * Factory method used while Json deserialization. Resolves known
-     * counterparties and checks format of keys.
+     * counterparties.
      *
      * @param sellerKey   key of known seller.
      * @param customerKey key of known customer.
